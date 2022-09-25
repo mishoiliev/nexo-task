@@ -1,24 +1,38 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { Button, CircularProgress } from "@mui/material";
+import React, { useEffect } from "react";
+import "./App.css";
+import { useMetaMask } from "./hooks/useMetaMask";
 
 function App() {
+  const {
+    accounts,
+    getAccounts,
+    getBalance,
+    ethBalance,
+    nexoBalance,
+    error,
+    loading,
+  } = useMetaMask();
+  const accountSelected = accounts[0];
+
+  useEffect(() => {
+    getBalance(accountSelected);
+  }, [accountSelected]);
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <div>
+        <Button onClick={() => getAccounts()}>Connect to MetaMask</Button>
+      </div>
+      {loading ? (
+        <CircularProgress />
+      ) : !error ? (
+        `
+      ETH Balance: ${ethBalance}
+      NEXO Balance: ${nexoBalance}`
+      ) : (
+        error
+      )}
     </div>
   );
 }
