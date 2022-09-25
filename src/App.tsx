@@ -1,37 +1,78 @@
-import { Button, CircularProgress } from "@mui/material";
-import React, { useEffect } from "react";
+import { Alert, CircularProgress } from "@mui/material";
+import { useEffect } from "react";
 import "./App.css";
+import Balance from "./components/Balance";
+import ConnectAppBar from "./components/ConnectAppBar";
+import TradeForm from "./components/TradeForm";
+import { WETH_CONTRACT } from "./constants";
 import { useMetaMask } from "./hooks/useMetaMask";
 
 function App() {
   const {
     accounts,
-    getAccounts,
-    getBalance,
-    ethBalance,
-    nexoBalance,
     error,
     loading,
+    ethBalance,
+    nexoBalance,
+    wETHBalance,
+    connectedNetwork,
+    etherPriceUSD,
+    getBalance,
+    getAccounts,
+    transferEth,
+    swapWETHtoNEXO,
   } = useMetaMask();
+
   const accountSelected = accounts[0];
 
   useEffect(() => {
-    getBalance(accountSelected);
+    if (accountSelected) {
+      getBalance(accountSelected);
+    }
   }, [accountSelected]);
 
   return (
     <div className="App">
-      <div>
-        <Button onClick={() => getAccounts()}>Connect to MetaMask</Button>
-      </div>
+      <ConnectAppBar
+        connectedNetwork={connectedNetwork}
+        getAccounts={getAccounts}
+        accountSelected={accountSelected}
+      />
+      <div style={{ height: "64px" }} />
+      {error && <Alert severity="error">{error}</Alert>}
       {loading ? (
-        <CircularProgress />
-      ) : !error ? (
-        `
-      ETH Balance: ${ethBalance}
-      NEXO Balance: ${nexoBalance}`
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            width: "100vw",
+            height: "100vh",
+          }}
+        >
+          <CircularProgress />
+        </div>
       ) : (
-        error
+        !error && (
+          <div>
+            <Balance
+              ethPriceUSD={etherPriceUSD || "0"}
+              ethBalance={ethBalance || "0"}
+              nexoBalance={nexoBalance || "0"}
+              wEthBalance={wETHBalance || "0"}
+            />
+            <TradeForm
+              availableBalance={ethBalance}
+              buttonContent="Wrap ETH to WETH"
+              onSubmitAction={(amount) => transferEth(WETH_CONTRACT, amount)}
+            />
+            <TradeForm
+              availableBalance={wETHBalance}
+              buttonContent="Swap WETH to NEXO"
+              onSubmitAction={(amount) => swapWETHtoNEXO(amount)}
+            />
+          </div>
+        )
       )}
     </div>
   );

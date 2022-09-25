@@ -1,0 +1,12 @@
+export const NEXO_CONTRACT = "0xB62132e35a6c13ee1EE0f84dC5d40bad8d815206";
+export const NEXO_CONTRACT_RINKEBY =
+  "0xd31Ec377dA3C5A7452b1f2bFB87bFB941D61a1Db";
+export const WETH_CONTRACT = "0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2";
+export const WETH_CONTRACT_RINKEBY =
+  "0xc778417E063141139Fce010982780140Aa0cD5Ab";
+
+export const USDC_CONTRACT = "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48";
+
+export const ERC20_ABI = [
+  "function balanceOf(address) external view returns (uint256)",
+];
